@@ -1,0 +1,22 @@
+Opsi 1 — Ubah policy untuk user saat ini (disarankan, aman)
+
+powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+2. Pastikan Virtual Environment Aktif
+
+Cek di terminal, harus ada tulisan (venv) di awal baris, contoh:
+
+(venv) namakamu@laptop hr-management-app %
+
+Kalau belum ada (venv), aktifkan manual:
+
+bash
+# Mac/Linux
+source venv/bin/activate
+
+# Windows (Command Prompt)
+venv\Scripts\activate
+
+# Windows (PowerShell)
+venv\Scripts\Activate.ps1

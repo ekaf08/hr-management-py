@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 
 from karyawan_repository import KaryawanRepository
 from schemas import Karyawan, KaryawanCreate, KaryawanUpdate
+from absensi_repository import AbsensiRepository
+from schemas import AbsensiMasuk, AbsensiKeluar
 
 app = FastAPI(title="HR Management API", version="1.0.0")
 
@@ -60,4 +62,29 @@ def resign_karyawan(id_karyawan: int):
         raise HTTPException(status_code=404, detail="Karyawan tidak ditemukan")
     return {"message": "Karyawan berhasil dinonaktifkan"}
 
+@app.post("/absensi/masuk")
+def absen_masuk(payload: AbsensiMasuk):
+    repo = AbsensiRepository()
+    id_absensi = repo.catat_masuk(karyawan_id=payload.karyawan_id)
+    repo.close()
 
+    if id_absensi is None:
+        raise HTTPException(status_code=409, detail="Karyawan sudah absen pada hari ini")
+    return {"id": id_absensi, "message": "Absensi masuk berhasil dicatat"}
+
+@app.post("/absensi/keluar")
+def absen_keluar(payload: AbsensiKeluar):
+    repo = AbsensiRepository()
+    jumlah = repo.catat_keluar(karyawan_id=payload.karyawan_id)
+    repo.close()
+
+    if jumlah == 0:
+        raise HTTPException(status_code=404, detail="Karyawan tidak ditemukan atau belum absen masuk")
+    return {"message": "Absensi keluar berhasil dicatat"}
+
+@app.get("/absensi/{karyawan_id}/{tahun}/{bulan}")
+def riwayat_absensi(karyawan_id: int, tahun: int, bulan: int):
+    repo = AbsensiRepository()
+    data = repo.get_by_bulan(karyawan_id=karyawan_id, bulan=bulan, tahun=tahun)
+    repo.close()
+    return data

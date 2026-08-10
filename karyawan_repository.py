@@ -32,7 +32,7 @@ class KaryawanRepository:
             RETURNING id;
         """
         cursor.execute(query, (nik, nama_lengkap, email, tanggal_masuk, departemen_id))
-        id_baru = cursor.fetchone()[0]
+        id_baru = cursor.fetchone()['id']
         self.conn.commit()
         cursor.close()
         return id_baru

@@ -22,5 +22,11 @@ class Karyawan(BaseModel):
     departemen_id: int
     status: str
 
+class AbsensiMasuk(BaseModel):
+    karyawan_id: int
+
+class AbsensiKeluar(BaseModel):
+    karyawan_id: int
+
     class Config:
         from_attributes = True

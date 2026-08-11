@@ -1,9 +1,9 @@
 from fastapi import FastAPI, HTTPException
 
-from karyawan_repository import KaryawanRepository
-from schemas import Karyawan, KaryawanCreate, KaryawanUpdate
-from absensi_repository import AbsensiRepository
-from schemas import AbsensiMasuk, AbsensiKeluar
+from repositories.karyawan_repository import KaryawanRepository
+from repositories.absensi_repository import AbsensiRepository
+from schemas.karyawan_schema import KaryawanCreate, KaryawanUpdate
+from schemas.absensi_schema import AbsensiMasuk, AbsensiKeluar
 
 app = FastAPI(title="HR Management API", version="1.0.0")
 

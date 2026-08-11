@@ -1,7 +1,7 @@
 from  datetime import date, datetime
 
 import psycopg2
-from koneksi import get_koneksi
+from core.database import get_koneksi
 
 class AbsensiRepository:
     def __init__(self):

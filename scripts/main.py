@@ -1,4 +1,4 @@
-from karyawan_repository import KaryawanRepository
+from repositories.karyawan_repository import KaryawanRepository
 
 def main():
     repo = KaryawanRepository()

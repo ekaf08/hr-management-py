@@ -1,4 +1,4 @@
-from absensi_repository import AbsensiRepository
+from repositories.absensi_repository import AbsensiRepository
 
 def main():
     repo = AbsensiRepository()

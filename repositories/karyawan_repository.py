@@ -1,4 +1,4 @@
-from koneksi import get_koneksi
+from core.database import get_koneksi
 
 class KaryawanRepository:
     """

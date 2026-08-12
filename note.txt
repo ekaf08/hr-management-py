@@ -20,3 +20,8 @@ venv\Scripts\activate
 
 # Windows (PowerShell)
 venv\Scripts\Activate.ps1
+
+instal : pip install fastapi "uvicorn[standard]"
+        (FastAPI → framework untuk bikin API (mirip Laravel/Slim kalau di PHP, tapi lebih ringan dan fokus ke API))
+
+        run : uvicorn app:app --reload

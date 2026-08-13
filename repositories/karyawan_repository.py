@@ -12,7 +12,7 @@ class KaryawanRepository:
 
     def get_all(self):
         cursor = self.conn.cursor()
-        cursor.execute("SELECT id, nik, nama_lengkap, email, status FROM karyawan ORDER BY id DESC;")
+        cursor.execute("SELECT id, nik, nama_lengkap, email, tanggal_masuk ,status, departemen_id FROM karyawan ORDER BY id DESC;")
         hasil = cursor.fetchall()
         cursor.close()
         return hasil

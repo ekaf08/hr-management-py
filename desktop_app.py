@@ -155,7 +155,7 @@ class HRApp:
 
         form = tk.Toplevel(self.root)
         form.title(f"Edit Karyawan - {nik}")
-        form.geometry("400x400")
+        form.geometry("600x600")
 
         ttk.Label(form, text="Nama Lengkap").pack(pady=(10, 0))
         entry_nama = ttk.Entry(form, width=40)

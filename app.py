@@ -38,13 +38,13 @@ def create_karyawan(payload: KaryawanCreate):
     return {"id": id_baru, "message": "Karyawan berhasil ditambahkan"}
 
 @app.put("/karyawan/{id_karyawan}")
-def update_karyawan(id_karyawan: int, payaload: KaryawanUpdate):
+def update_karyawan(id_karyawan: int, payload: KaryawanUpdate):
     repo = KaryawanRepository()
     jumlah = repo.update(
         id_karyawan,
-        payaload.nama_lengkap,
-        payaload.email,
-        payaload.departemen_id
+        payload.nama_lengkap,
+        payload.email,
+        payload.departemen_id
     )
     repo.close()
 

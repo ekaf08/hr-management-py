@@ -37,14 +37,14 @@ class KaryawanRepository:
         cursor.close()
         return id_baru
 
-    def update(self, id_karyawan, nama_lengkap, email, departemen_id, status):
+    def update(self, id_karyawan, nama_lengkap, email, departemen_id):
         cursor = self.conn.cursor()
         query = """
             UPDATE karyawan
-            SET nama_lengkap = %s, email = %s, departemen_id = %s, status = %s
+            SET nama_lengkap = %s, email = %s, departemen_id = %s 
             WHERE id = %s;
         """
-        cursor.execute(query, (nama_lengkap, email, departemen_id, id_karyawan, status))
+        cursor.execute(query, (nama_lengkap, email, departemen_id, id_karyawan ))
         baris_terupdate = cursor.rowcount
         self.conn.commit()
         cursor.close()

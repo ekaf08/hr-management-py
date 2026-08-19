@@ -2,18 +2,22 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import requests
 
-API_URL = "http://127.0.0.1:8000"
+API_URL = "http://127.0.0.1:8000"  # Replace with your actual API
 
-class KaryawanFrame(tk.Frame):
-    """Frame untuk menampilkan data karyawan."""
 
-    def __init__(self,parent):
-        super().__init__(parent) # wajib panggil constructor parent (ttk.Frame)
+class HRApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("HR Management - Data Karyawan")
+        self.root.geometry("1000x600")
 
+        # PENTING: semua kolom yang ingin ditampilkan/di-set heading-nya
+        # harus didaftarkan di parameter columns=(...) ini.
         self.tree = ttk.Treeview(
-                columns=("id", "nik", "nama", "email", "status", "departemen_id", "tanggal_masuk"),
-                show="headings"
-            )
+            root,
+            columns=("id", "nik", "nama", "email", "status", "departemen_id", "tanggal_masuk"),
+            show="headings"
+        )
         self.tree.heading("id", text="ID")
         self.tree.heading("nik", text="NIK")
         self.tree.heading("nama", text="Nama")
@@ -23,13 +27,21 @@ class KaryawanFrame(tk.Frame):
         self.tree.heading("tanggal_masuk", text="Tanggal Masuk")
         self.tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-        frame_tombol = ttk.Frame(self)
+        # Frame untuk kumpulan tombol, biar rapi sejajar horizontal
+        frame_tombol = ttk.Frame(root)
         frame_tombol.pack(pady=5)
 
-        ttk.Button(frame_tombol, text="Refresh Data", command=self.load_karyawan).grid(row=0, column=0, padx=5)
-        ttk.Button(frame_tombol, text="Tambah Karyawan", command=self.buka_form_tambah).grid(row=0, column=1, padx=5)
-        ttk.Button(frame_tombol, text="Edit Karyawan", command=self.buka_form_edit).grid(row=0, column=2, padx=5)
-        ttk.Button(frame_tombol, text="Resign Karyawan", command=self.hapus_karyawan).grid(row=0, column=3, padx=5)
+        btn_refresh = ttk.Button(frame_tombol, text="Refresh Data", command=self.load_karyawan)
+        btn_refresh.grid(row=0, column=0, padx=5)
+
+        btn_tambah = ttk.Button(frame_tombol, text="Tambah Karyawan", command=self.buka_form_tambah)
+        btn_tambah.grid(row=0, column=1, padx=5)
+
+        btn_edit = ttk.Button(frame_tombol, text="Edit Karyawan", command=self.buka_form_edit)
+        btn_edit.grid(row=0, column=2, padx=5)
+
+        btn_hapus = ttk.Button(frame_tombol, text="Resign Karyawan", command=self.hapus_karyawan)
+        btn_hapus.grid(row=0, column=3, padx=5)
 
         self.load_karyawan()
 
@@ -59,7 +71,7 @@ class KaryawanFrame(tk.Frame):
 
     def buka_form_tambah(self):
         """Buka window baru untuk menambah data karyawan."""
-        form = tk.Toplevel(self)
+        form = tk.Toplevel(self.root)
         form.title("Tambah Data Karyawan")
         form.geometry("400x400")
 
@@ -120,7 +132,6 @@ class KaryawanFrame(tk.Frame):
 
         btn_simpan = ttk.Button(form, text="Simpan", command=simpan)
         btn_simpan.pack(pady=15)
-        pass
 
     def get_selected_karyawan(self):
         """Ambil data karyawan yang sedang di-klik/dipilih dari tabel."""
@@ -142,7 +153,7 @@ class KaryawanFrame(tk.Frame):
         # id, nik, nama, email, status, departemen_id, tanggal_masuk
         id_karyawan, nik, nama_lama, email_lama, status, departemen_lama, tanggal_masuk_lama = data
 
-        form = tk.Toplevel(self)
+        form = tk.Toplevel(self.root)
         form.title(f"Edit Karyawan - {nik}")
         form.geometry("600x600")
 
@@ -171,6 +182,7 @@ class KaryawanFrame(tk.Frame):
                 "nama_lengkap": entry_nama.get().strip(),
                 "email": entry_email.get().strip(),
                 "departemen_id": entry_departemen.get().strip(),
+                "tanggal_masuk": entry_tanggal.get().strip(),
             }
 
             try:
@@ -182,17 +194,13 @@ class KaryawanFrame(tk.Frame):
                 self.load_karyawan()
 
             except requests.exceptions.HTTPError as e:
-                try:
-                    detail = response.json().get("detail", str(e))
-                except ValueError:
-                    detail = f"Status {response.status_code}: {response.text}"
+                detail = response.json().get("detail", str(e))
                 messagebox.showerror("Gagal", f"Terjadi kesalahan: {detail}")
             except requests.exceptions.RequestException as e:
                 messagebox.showerror("Error", f"Tidak bisa terhubung ke server: {e}")
 
         btn_simpan = ttk.Button(form, text="Update", command=simpan_edit)
         btn_simpan.pack(pady=15)
-        pass
 
     def hapus_karyawan(self):
         data = self.get_selected_karyawan()
@@ -219,86 +227,9 @@ class KaryawanFrame(tk.Frame):
 
         except requests.exceptions.RequestException as e:
             messagebox.showerror("Error", f"Gagal menghapus data: {e}")
-        pass
-
-class AbsensiFrame(ttk.Frame):
-    """Frame untuk tab absensi - fitur catat masuk dan keluar karyawan."""
-
-    def __init__(self, parent):
-        super().__init__(parent)
-
-        ttk.Label(self, text="Catat Kehadiran karyawan", font=("Arial", 12, "bold")).pack(pady=10)
-
-        frame_input = ttk.Frame(self)
-        frame_input.pack(pady=10)
-
-        ttk.Label(frame_input, text="Id Karyawan").grid(row=0, column=0, padx=5, pady=5)
-        self.entry_id_karyawan = ttk.Entry(frame_input, width=40)
-        self.entry_id_karyawan.grid(row=0, column=1, padx=5, pady=5)
-
-        frame_tombol = ttk.Frame(self)
-        frame_tombol.pack(pady=10)
-
-        ttk.Button(frame_tombol, text="Absen Masuk", command=self.absen_masuk).grid(row=0, column=0, padx=5)
-        ttk.Button(frame_tombol, text="Absen Keluar", command=self.absen_keluar).grid(row=0, column=1, padx=5)
-
-        self.label_status = ttk.Label(self, text="", foreground="green")
-        self.label_status.pack(pady=10)
-
-    def absen_masuk(self):
-        karyawan_id = self.entry_id_karyawan.get().strip()
-
-        if not karyawan_id:
-            messagebox.showwarning("Peringatan", "Isi ID Karyawan dulu.")
-            return
-
-        try:
-            response = requests.post(f"{API_URL}/absensi/masuk", json={"karyawan_id": int(karyawan_id)})
-            response.raise_for_status()
-            self.label_status.config(text="✅ Absen masuk berhasil dicatat.")
-
-        except requests.exceptions.HTTPError:
-            detail = response.json().get("detail", "Terjadi kesalahan")
-            self.label_status.config(text=f"⚠️ {detail}")
-        except requests.exceptions.RequestException as e:
-            messagebox.showerror("Error", f"Tidak bisa terhubung ke server: {e}")
-      
-    def absen_keluar(self):
-        karyawan_id = self.entry_id_karyawan.get().strip()
-
-        if not karyawan_id:
-            messagebox.showwarning("Peringatan", "Isi ID Karyawan dulu.")
-            return
-
-        try:
-            response = requests.post(f"{API_URL}/absensi/keluar", json={"karyawan_id": int(karyawan_id)})
-            response.raise_for_status()
-            self.label_status.config(text="✅ Absen keluar berhasil dicatat.")
-
-        except requests.exceptions.HTTPError:
-            detail = response.json().get("detail", "Terjadi kesalahan")
-            self.label_status.config(text=f"⚠️ {detail}")
-        except requests.exceptions.RequestException as e:
-            messagebox.showerror("Error", f"Tidak bisa terhubung ke server: {e}")
-
-
-class MainApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("HR Management System")
-        self.root.geometry("900x650")
-
-        notebook = ttk.Notebook(root)
-        notebook.pack(fill=tk.BOTH, expand=True)
-
-        tab_karyawan = KaryawanFrame(notebook)
-        tab_absensi = AbsensiFrame(notebook)
-
-        notebook.add(tab_karyawan, text="Data Karyawan")
-        notebook.add(tab_absensi, text="Absensi")
 
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = MainApp(root)
+    app = HRApp(root)
     root.mainloop()
